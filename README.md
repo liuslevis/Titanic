@@ -6,7 +6,7 @@ Machine Learning from Disaster
 
 1. Predict survival of given passenger in test set.
 
-2. Explain importances of different features.
+2. Explain what you've learn.
 
 ## Data Description
 
