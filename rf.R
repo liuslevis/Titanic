@@ -4,21 +4,21 @@
 library(randomForest)
 library(MASS)
 library(Amelia)
-set.seed(415)
+# set.seed(415)
 
-formula <- Survived ~ Pclass + Sex + AgeD + FamilySizeD + Fare + Embarked
+formula <- Survived ~ Pclass + Sex + AgeD + FamilySizeD + Fare + Embarked + Title + CabinD
 features <- c("Pclass", "Sex", "AgeD", "FamilySizeD", "Fare", "Embarked")
 
 trainData  <- read.csv(file="data/train.csv", head=TRUE, sep=",")
 testData   <- read.csv(file="data/test.csv" , head=TRUE, sep=",")
-summary(testData)
-testData$Survived <- numeric()
 testData$Survived <- 0
 
 ########### Data Cleansing Begin ##############
 combi <- rbind(trainData, testData)
 
-combi$Survived <- as.factor(combi$combi$Survived)
+combi$Survived <- as.factor(combi$Survived)
+
+combi$Pclass <- factor(combi$Pclass) 
 
 combi$FamilySize <- combi$SibSp + combi$Parch + 1
 combi$FamilySizeD[combi$FamilySize == 1] <- 'singleton'
@@ -37,11 +37,22 @@ combi$Embarked <- as.factor(combi$Embarked)
 
 combi$Fare[is.na(combi$Fare)] <- 0
 
+# 20% -> 16%
 combi$Name <- as.character(combi$Name)
 combi$Title <- sapply(combi$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]][2]})
-combi$Title <- as.factor(sub(' ', '', combi$Title))
+combi$Title <- sub(' ', '', combi$Title)
+combi$Title[combi$Title %in% c('Capt', 'Col', 'Major', 'Dr', 'Rev')] <- 'Officer'
+combi$Title[combi$Title %in% c('Jonkheer', 'Don', 'Sir', 'the Countess', 'Dona', 'Lady')] <- 'Royalty'
+combi$Title[combi$Title %in% c('Mme')] <- 'Mrs'
+combi$Title[combi$Title %in% c('Mlle')] <- 'Miss'
+combi$Title[combi$Title %in% c('Master')] <- 'Master'
+combi$Title <- as.factor(combi$Title)
 
-combi$Pclass <- factor(combi$Pclass) 
+# 1%
+combi$Cabin <- as.character(combi$Cabin)
+combi$CabinD <- substr(combi$Cabin, 0, 1)
+combi$CabinD[combi$CabinD==''] <- 'F'
+combi$CabinD <- as.factor(combi$CabinD)
 
 trainData <- head(combi, nrow(trainData))
 testData  <- tail(combi, nrow(testData))
@@ -51,17 +62,20 @@ testData  <- tail(combi, nrow(testData))
 train <- trainData
 test  <- testData
 
+rf <- randomForest(formula=formula, data=train, importance=TRUE, ntree=200, do.trace=0, nodesize=2**3)
+
+
+summary(combi)
 # summary(train)
-summary(test)
-# sapply(train, sd) # standard deriviation
+# summary(test)
+# summary(rf)
+# varImpPlot(rf)
+print(rf$importance)
+print(rf)
+# str(rf)
 
-rf <- randomForest(formula=formula, data=train, importance=TRUE, ntrees=2000)
-
-varImpPlot(rf)
-
-summary(rf)
 
 submission <- data.frame(PassengerId = test$PassengerId)
-prediction <- predict(rf, test)
-submission$Survived <- ifelse(prediction > 0.5, 1, 0)
+submission$Survived <- predict(rf, test)
+
 write.csv(submission, file="data/submit_rf.csv", row.names=FALSE, quote=FALSE)

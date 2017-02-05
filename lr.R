@@ -79,7 +79,7 @@ lr.glm <- glm(
 
 lr.stepAIC = stepAIC(lr.glm, direction="backward") ###变量筛选方法-逐步回归对方程修正 向后回归法
 
-model <- lr.glm
+model <- lr.stepAIC
 confint(model)
 summary(model)
 
@@ -88,7 +88,7 @@ valid.results <- predict(
     newdata=valid)
 valid.results <- ifelse(valid.results > 0.5, 1, 0)
 errorRate <- mean(valid.results != valid$Survived)
-print(paste("Accuracy", 1 - errorRate))
+print(paste("Accuracy:", 1 - errorRate))
 
 test.results <- predict(
     model, 
