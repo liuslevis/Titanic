@@ -4,7 +4,6 @@
 library(randomForest)
 library(MASS)
 library(Amelia)
-# set.seed(415)
 
 formula <- Survived ~ Pclass + Sex + AgeD + FamilySizeD + Fare + Embarked + Title + CabinD
 features <- c("Pclass", "Sex", "AgeD", "FamilySizeD", "Fare", "Embarked")
@@ -64,12 +63,11 @@ test  <- testData
 
 rf <- randomForest(formula=formula, data=train, importance=TRUE, ntree=200, do.trace=0, nodesize=2**3)
 
-
 summary(combi)
 # summary(train)
 # summary(test)
 # summary(rf)
-# varImpPlot(rf)
+varImpPlot(rf)
 print(rf$importance)
 print(rf)
 # str(rf)
