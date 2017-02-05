@@ -48,6 +48,12 @@ nephews/nieces, aunts/uncles, and in-laws.  Some children travelled
 only with a nanny, therefore parch=0 for them.  As well, some
 travelled with very close friends or neighbors in a village, however,
 the definitions do not support such relations.
+
+PS:
+
+Titanic Structure: https://www.kaggle.com/c/titanic/discussion/4693#25690
+
+Titanic Cabins: http://www.encyclopedia-titanica.org/cabins.html
 ```
 
 ## Data Cleansing
