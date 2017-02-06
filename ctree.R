@@ -5,7 +5,7 @@ library(MASS)
 library(Amelia)
 library(partykit)
 
-formula <- Survived ~ Pclass + Sex + AgeD + FamilySizeD + Fare + Embarked + Title + CabinD
+formula <- Survived ~ Pclass + Sex + AgeD + SibSp + Parch + FamilySizeD + Fare + Embarked + Title + CabinD
 features <- c("Pclass", "Sex", "AgeD", "FamilySizeD", "Fare", "Embarked")
 
 trainData  <- read.csv(file="data/train.csv", head=TRUE, sep=",")
@@ -61,8 +61,12 @@ testData  <- tail(combi, nrow(testData))
 train <- trainData
 test  <- testData
 
-ct <- ctree(formula=formula, data=train, control=ctree_control())
+# decress mincriterion to get more splits and improve score slightly
+ct <- ctree(formula=formula, data=train, control=ctree_control(mtry=1000L, mincriterion=0.05, maxdepth=Inf))
+# ?ctree
+?ctree_control
 plot(ct)
+# plot(ct,type='simple')
 # summary(combi)
 # summary(train)
 # summary(test)
@@ -75,4 +79,4 @@ print(ct)
 submission <- data.frame(PassengerId = test$PassengerId)
 submission$Survived <- predict(ct, test)
 
-write.csv(submission, file="data/submit_ct.csv", row.names=FALSE, quote=FALSE)
+write.csv(submission, file="data/submit_ctree.csv", row.names=FALSE, quote=FALSE)

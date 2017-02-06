@@ -48,12 +48,6 @@ nephews/nieces, aunts/uncles, and in-laws.  Some children travelled
 only with a nanny, therefore parch=0 for them.  As well, some
 travelled with very close friends or neighbors in a village, however,
 the definitions do not support such relations.
-
-PS:
-
-Titanic Structure: https://www.kaggle.com/c/titanic/discussion/4693#25690
-
-Titanic Cabins: http://www.encyclopedia-titanica.org/cabins.html
 ```
 
 ## Data Cleansing
@@ -154,7 +148,9 @@ summary(combi)
 ###############################################################
 ```
 
-## Train Model & Predict
+## Logistic Regression
+
+### Train Model & Predict
 
 ```
 trainData <- head(combi, nrow(trainData))
@@ -171,7 +167,7 @@ submission$Survived <- predict(rf, test)
 write.csv(submission, file="data/submit_rf.csv", row.names=FALSE, quote=FALSE)
 ```
 
-## Interpret Model
+### Intepretet Model
 
 Print basic info of RF model.
 
@@ -220,3 +216,7 @@ varImpPlot(rf)
 `Mean decrease in node impurity`: feature importance is calculated by looking at the splits of each tree. The importance of the splitting variable is proportional to the improvement to the gini index given by that split and it is accumulated (for each variable) over all the trees in the forest.
 
 `Mean decrease in accuracy`: This method, proposed in the original paper, passes the OOB samples down the tree and records prediction accuracy. A variable is then selected and its values in the OOB samples are randomly permuted. OOB samples are passed down the tree and accuracy is computed again. A decrease in accuracy obtained by this permutation is averaged over all trees for each variable and it provides the importance of that variable (the higher the decreas the higher the importance).
+
+## CTree
+
+## Random Forest
